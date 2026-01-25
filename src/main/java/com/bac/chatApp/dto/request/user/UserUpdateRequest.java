@@ -7,9 +7,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCreationRequest {
-    private String username;
-    private String password;
+public class UserUpdateRequest {
     private String email;
     private String displayName;
+    private String bio;
+    private String phone;
 }

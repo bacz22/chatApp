@@ -1,7 +1,7 @@
 package com.bac.chatApp.service.impl;
 
 import com.bac.chatApp.dto.request.user.UserCreationRequest;
-import com.bac.chatApp.dto.request.user.UserForgotPasswordRequest;
+import com.bac.chatApp.dto.request.user.UserChangePasswordRequest;
 import com.bac.chatApp.dto.request.user.UserUpdateRequest;
 import com.bac.chatApp.dto.response.user.UserCreationResponse;
 import com.bac.chatApp.dto.response.user.UserResponse;
@@ -50,14 +50,8 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse getInfo() {
-        // Lấy Authentication từ SecurityContext
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Lấy JWT từ principal
-        Jwt jwt = (Jwt) auth.getPrincipal();
-
-        // Lấy userId từ claims
-        Long userId = jwt.getClaim("userId");
+        Long userId = getCurrentUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
@@ -74,14 +68,8 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse updateProfile(UserUpdateRequest request) {
-        // Lấy Authentication từ SecurityContext
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Lấy JWT từ principal
-        Jwt jwt = (Jwt) auth.getPrincipal();
-
-        // Lấy userId từ claims
-        Long userId = jwt.getClaim("userId");
+        Long userId = getCurrentUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
@@ -95,15 +83,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void forgotPassword(UserForgotPasswordRequest request) {
-        // Lấy Authentication từ SecurityContext
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public void changePassword(UserChangePasswordRequest request) {
 
-        // Lấy JWT từ principal
-        Jwt jwt = (Jwt) auth.getPrincipal();
-
-        // Lấy userId từ claims
-        Long userId = jwt.getClaim("userId");
+        Long userId = getCurrentUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
@@ -119,14 +101,8 @@ public class UserService implements IUserService {
 
     @Override
     public String uploadAvatar(MultipartFile file) {
-        // Lấy Authentication từ SecurityContext
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Lấy JWT từ principal
-        Jwt jwt = (Jwt) auth.getPrincipal();
-
-        // Lấy userId từ claims
-        Long userId = jwt.getClaim("userId");
+        Long userId = getCurrentUserId();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
@@ -147,9 +123,16 @@ public class UserService implements IUserService {
             }
             String avatarUrl = iCloudinaryService.upload(file);
             user.setAvatarUrl(avatarUrl);
+            userRepository.save(user);
             return avatarUrl;
         }catch (IOException e){
             throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
         }
+    }
+
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) auth.getPrincipal();
+        return jwt.getClaim("userId");
     }
 }

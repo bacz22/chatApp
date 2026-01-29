@@ -1,12 +1,13 @@
 package com.bac.chatApp.controller;
 
 import com.bac.chatApp.dto.request.user.UserCreationRequest;
-import com.bac.chatApp.dto.request.user.UserForgotPasswordRequest;
+import com.bac.chatApp.dto.request.user.UserChangePasswordRequest;
 import com.bac.chatApp.dto.request.user.UserUpdateRequest;
 import com.bac.chatApp.dto.response.ApiResponse;
 import com.bac.chatApp.dto.response.user.UserCreationResponse;
 import com.bac.chatApp.dto.response.user.UserResponse;
 import com.bac.chatApp.service.IUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +19,7 @@ public class UserController {
     private final IUserService iUserService;
 
     @PostMapping("/register")
-    public ApiResponse<UserCreationResponse> createUser(@RequestBody UserCreationRequest request){
+    public ApiResponse<UserCreationResponse> createUser(@RequestBody @Valid UserCreationRequest request){
         return ApiResponse.<UserCreationResponse>builder()
                 .errorCode(0)
                 .message("")
@@ -45,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping("/me")
-    public ApiResponse<UserResponse> updateProfile(@RequestBody UserUpdateRequest request){
+    public ApiResponse<UserResponse> updateProfile(@RequestBody @Valid UserUpdateRequest request){
         return ApiResponse.<UserResponse>builder()
                 .errorCode(0)
                 .message("")
@@ -54,11 +55,11 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public ApiResponse<Void> forgotPassword(@RequestBody UserForgotPasswordRequest request){
-        iUserService.forgotPassword(request);
+    public ApiResponse<Void> forgotPassword(@RequestBody @Valid UserChangePasswordRequest request){
+        iUserService.changePassword(request);
         return ApiResponse.<Void>builder()
                 .errorCode(0)
-                .message("password change successful")
+                .message("password change successfully")
                 .build();
     }
 

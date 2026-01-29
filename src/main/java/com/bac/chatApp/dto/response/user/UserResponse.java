@@ -3,6 +3,8 @@ package com.bac.chatApp.dto.response.user;
 import com.bac.chatApp.model.User;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +18,8 @@ public class UserResponse {
     private String avatarUrl;
     private String bio;
     private String phone;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static UserResponse toUserResponse(User user){
         return UserResponse.builder()
@@ -26,6 +30,8 @@ public class UserResponse {
                 .avatarUrl(user.getAvatarUrl())
                 .bio(user.getBio())
                 .phone(user.getPhone())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 }

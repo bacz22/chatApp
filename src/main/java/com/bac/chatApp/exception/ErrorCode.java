@@ -38,6 +38,9 @@ public enum ErrorCode {
     UN_RESPOND_REQUEST(3005, "người gửi không thể tự chấp nhận mời mời kết bạn đã gửi",HttpStatus.BAD_REQUEST),
     REQUEST_ALREADY_PROCESSED(3006, "Chỉ có thể phản hồi các yêu cầu đang chờ xử lý.", HttpStatus.BAD_REQUEST),
     CANNOT_BLOCK_YOURSELF(3007, "không thể tự chặn chính mình", HttpStatus.BAD_REQUEST),
+
+    //notification 4000-4999
+    NOTIFICATION_NOT_FOUND(4000, "Không tìm thấy thông báo này", HttpStatus.BAD_REQUEST),
     ;
     private int errorCode;
     private String errorMessage;

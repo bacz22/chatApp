@@ -10,6 +10,7 @@ import com.bac.chatApp.model.FriendshipStatus;
 import com.bac.chatApp.repository.FriendShipRepository;
 import com.bac.chatApp.repository.UserRepository;
 import com.bac.chatApp.service.IFriendShipService;
+import com.bac.chatApp.service.INotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,8 @@ public class FriendShipService implements IFriendShipService {
 
     private final FriendShipRepository friendShipRepository;
     private final UserRepository userRepository;
+
+    private final INotificationService iNotificationService;
 
     @Override
     public FriendShipResponse sendRequest(FriendRequest request) {
@@ -60,6 +63,9 @@ public class FriendShipService implements IFriendShipService {
                 .message(request.getMessage())
                 .build();
         friendShip = friendShipRepository.save(friendShip);
+
+        iNotificationService.sendFriendRequestNotification(targetUserId, currentUserId, friendShip.getId());
+
         return FriendShipResponse.toFriendShipResponse(friendShip, currentUserId);
 
     }
@@ -90,6 +96,14 @@ public class FriendShipService implements IFriendShipService {
         //update status
         friendShip.setStatus(request.getAccept() ? FriendshipStatus.ACCEPTED : FriendshipStatus.REJECTED);
         friendShipRepository.save(friendShip);
+
+        if (request.getAccept()) {
+            iNotificationService.sendFriendAcceptedNotification(
+                    friendShip.getRequesterId(),
+                    currentUserId,
+                    friendShip.getId()
+            );
+        }
 
         return FriendShipResponse.toFriendShipResponse(friendShip, currentUserId);
 

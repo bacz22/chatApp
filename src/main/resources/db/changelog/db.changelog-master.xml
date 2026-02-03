@@ -8,5 +8,6 @@
 
     <include file="db/changelog/001_create_users_table.xml"/>
     <include file="db/changelog/002_create_friendships_table.xml"/>
+    <include file="db/changelog/003_create_notifications_table.xml"/>
 
 </databaseChangeLog>
